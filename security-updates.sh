@@ -8,7 +8,7 @@ SITE_NAME="example.com"
 cd $WEBROOT
 
 # Make sure status is up to date
- ~/.composer/vendor/bin/drush pm-refresh
+ drush pm-refresh
 
 # Check for Security Updates
 OUTPUT="$(drush pm-updatestatus --security-only)"
