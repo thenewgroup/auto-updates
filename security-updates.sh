@@ -3,6 +3,7 @@
 
 WEBROOT="/var/www"
 EMAIL="me@example.com"
+BACKUP_DIR = "~/backups/manual"
 
 echo "Scanning sites directory for drupal installations"
 cd $WEBROOT
@@ -29,10 +30,10 @@ do
 		then
 			drush vset maintance_mode 1
 			# Take a backup and if it succeeds, run the update
-			drush sql-dump | gzip > ~/backup/prod.sql.gz && drush up --security-only -y
+			drush sql-dump | gzip > ~/${BACKUP_DIR}/${i}-pre-sec-update.sql.gz && drush up --security-only -y
 			drush vset maintance_mode 0
 		  # Notify stakeholders
-			echo "A critical security update has been applied to $SITE_DIR. You should test production now." | mail -s "Your website needs testing" "$EMAIL";
+			echo "A critical security update has been applied to $i. You should test production now." | mail -s "Your website needs testing" "$EMAIL";
 		else
 			echo "No available security updates"
 	else
