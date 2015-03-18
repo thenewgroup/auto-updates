@@ -1,6 +1,8 @@
 #!/bin/bash
 # Place this script in cron and run once per hour.
 
+# run `which drush` to find this path
+drush='/usr/bin/drush'
 WEBROOT="/var/www"
 EMAIL="me@example.com"
 BACKUP_DIR = "~/backups/manual"
@@ -18,8 +20,8 @@ do
 	cd $SITE_DIR && cd public_html
 	echo $(pwd) 
 	# first check to see if site directory has a drupal site
-	STATUS=$($drush status | wc -l)
-	if [[ $status -gt 7 ]]
+	SITE_STATUS=$($drush status | wc -l)
+	if [[ $SITE_STATUS -gt 7 ]]
 	then 
 		echo "Drupal site found"
 		# Make sure status is up to date
@@ -30,12 +32,13 @@ do
 		then
 			drush vset maintance_mode 1
 			# Take a backup and if it succeeds, run the update
-			drush sql-dump | gzip > ~/${BACKUP_DIR}/${i}-pre-sec-update.sql.gz && drush up --security-only -y
+			drush sql-dump | gzip > ${BACKUP_DIR}/${i}-pre-sec-update.sql.gz && drush up --security-only -y
 			drush vset maintance_mode 0
 		  # Notify stakeholders
 			echo "A critical security update has been applied to $i. You should test production now." | mail -s "Your website needs testing" "$EMAIL";
 		else
 			echo "No available security updates"
+		fi
 	else
 		echo "No Drupal Site Found"
 	fi 
