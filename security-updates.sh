@@ -16,25 +16,28 @@ do
 	# just use `cd $a` below
 	cd $SITE_DIR && cd public_html
 	echo $(pwd) 
-	# Make sure status is up to date
-	 drush pm-refresh
-
-	# Check for Security Updates
-	OUTPUT="$(drush pm-updatestatus --security-only)"
-	if [[ $OUTPUT == *"UPDATE"* ]]
-	then
-	  echo "Drupal site found"
-	  drush vset maintance_mode 1
-
-	  # Take a backup and if it succeeds, run the update
-	  drush sql-dump | gzip > ~/backup/prod.sql.gz && drush up --security-only -y
-	  drush vset maintance_mode 0
-
-	  # Notify stakeholders
-	  echo "A critical security update has been applied to $SITE_DIR. You should test production now." | mail -s "Your website needs testing" "$EMAIL";
-	  else
-		echo "No Drupal site found in this directory"
-	  fi 
-	  cd $WEBROOT
+	# first check to see if site directory has a drupal site
+	STATUS=$($drush status | wc -l)
+	if [[ $status -gt 7 ]]
+	then 
+		echo "Drupal site found"
+		# Make sure status is up to date
+		drush pm-refresh
+		# Check for Security Updates
+		OUTPUT="$(drush pm-updatestatus --security-only)"
+		if [[ $OUTPUT == *"UPDATE"* ]]
+		then
+			drush vset maintance_mode 1
+			# Take a backup and if it succeeds, run the update
+			drush sql-dump | gzip > ~/backup/prod.sql.gz && drush up --security-only -y
+			drush vset maintance_mode 0
+		  # Notify stakeholders
+			echo "A critical security update has been applied to $SITE_DIR. You should test production now." | mail -s "Your website needs testing" "$EMAIL";
+		else
+			echo "No available security updates"
+	else
+		echo "No Drupal Site Found"
+	fi 
+	cd $WEBROOT
 done
 echo "Done with Drupal Security Updates"
