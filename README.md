@@ -8,6 +8,8 @@ Install
 -------
 cd ~ && git clone https://github.com/thenewgroup/auto-updates.git
 
+Next, you *must* edit the variables at the top of the script to match your environment.
+
 Running the Script
 ------------------
 
