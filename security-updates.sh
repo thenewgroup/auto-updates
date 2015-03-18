@@ -31,7 +31,7 @@ do
 	  drush vset maintance_mode 0
 
 	  # Notify stakeholders
-	  echo "A critical security update has been applied to $SITE_NAME. You should test production now." | mail -s "Your website needs testing" "$EMAIL";
+	  echo "A critical security update has been applied to $SITE_DIR. You should test production now." | mail -s "Your website needs testing" "$EMAIL";
 	  else
 		echo "No Drupal site found in this directory"
 	  fi 
