@@ -14,7 +14,7 @@ do
 	# beneath your site_dir, i.e. /var/www/site.com,
 	# then you don't need to `cd public_html'
 	# just use `cd $a` below
-	cd $a && cd public_html
+	cd $SITE_DIR && cd public_html
 	echo $(pwd) 
 	# Make sure status is up to date
 	 drush pm-refresh
