@@ -18,6 +18,17 @@ then
 	mkdir -p $BACKUP_DIR
 fi
 
+# Capture any message piped into this script and send it to $EMAIL.
+# Allows to trigger this script by directing security anouncement emails to it.
+# For example, with a .forward or .qmail-security-announcments file
+# that contains a line with: "|/path/to/this/script/named/security-updates.sh"
+stdin=$(cat)
+if [ -n "$stdin" ]
+then
+ echo "$stdin" | mail -s "$WEB_ROOT: security-updates.sh got triggered with a message" "$EMAIL"
+fi
+
+
 echo "Scanning sites directory for Drupal installations"
 cd $WEB_ROOT
 
