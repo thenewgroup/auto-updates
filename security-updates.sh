@@ -2,8 +2,8 @@
 # You may poll for updates by running this script in a cron job, or
 # have updates triggerd by piping security announcement emails into this script.
 # For example, with a ~/.forward or ~/.qmail-drupal file
-# that contains a line reading (without the leading #):
-# |"/path/to/this/script/named/security-updates.sh mailpipe"
+# that contains a line reading (without #, and unquoted for qmail):
+# "|/path/to/this/script/named/security-updates.sh mailpipe"
 # and subscribing $USER-drupal@$HOST to the security email newsletter.
 # https://www.drupal.org/security.
 
