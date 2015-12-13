@@ -46,6 +46,7 @@ do
 
 			# Take a backup and if it succeeds, run the update
 			SITE_NAME=`basename ${i}`
+			mv ${BACKUP_DIR}/${SITE_NAME}-pre-sec-update.sql.gz ${BACKUP_DIR}/${SITE_NAME}-pre-pre-sec-update.sql.gz
 			drush sql-dump | gzip > ${BACKUP_DIR}/${SITE_NAME}-pre-sec-update.sql.gz && drush up --security-only -y | mail -s "Your website needs testing" "$EMAIL"
 			drush vset maintance_mode 0
 
