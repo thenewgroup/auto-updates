@@ -2,8 +2,8 @@
 # You may poll for updates by running this script in a cron job, or
 # have updates triggerd by piping security announcement emails into this script.
 # For example, with a ~/.forward or ~/.qmail-drupal file
-# that contains a line reading (without the leading #):
-# |"/path/to/this/script/named/security-updates.sh mailpipe"
+# that contains a line reading (without #, and unquoted for qmail):
+# "|/path/to/this/script/named/security-updates.sh mailpipe"
 # and subscribing $USER-drupal@$HOST to the security email newsletter.
 # https://www.drupal.org/security.
 
@@ -13,7 +13,7 @@
 # To limit this script to only 1 site, set WEB_ROOT to your Drupal root.
 # To use on multiple sites, set WEB_ROOT at the shared folder for all Drupal sites.
 
-WEB_ROOT="/var/www/virtual/${USER}/drupal"
+WEB_ROOT="/var/www"
 
 # Replace with "public_html" if you use a public_html subfolder
 PUBLIC_DIR="."
@@ -49,7 +49,7 @@ fi
 # This allows to trigger this script by directing security anouncement emails to it.
 if [ $1 == "mailpipe" ]
 then
-	stdin=$(cat; env)
+	stdin=$(cat)
 	if [ -n "$stdin" ]
 	then
 		echo "$stdin" | mail -s "$WEB_ROOT: security-updates.sh mailpipe triggered" "$EMAIL"
@@ -78,7 +78,7 @@ do
 
 		# Check for security updates
 		OUTPUT="$(drush pm-updatestatus ${DRUSHPARAM})"
-		if [[ $OUTPUT == *"Aktualisierung verfügba"* ]]
+		if [[ $OUTPUT == *"UPDATE"* ]]
 		then
 			# enable  maintenance
 			if [ -z "$drupal" ]
@@ -90,10 +90,9 @@ do
 
 			# Take a backup and if it succeeds, run the update
 			SITE_NAME=`basename ${i}`
-			#mv ${BACKUP_DIR}/${SITE_NAME}-pre-sec-update.sql.gz ${BACKUP_DIR}/${SITE_NAME}-pre-pre-sec-update.sql.gz
 			drush sql-dump | gzip > ${BACKUP_DIR}/${USER}-${SITE_NAME}-pre-sec-update_$(date +%F_%T).sql.gz && drush up ${DRUSHPARAM} -y | mail -s "${USER}-${SITE_NAME} website needs testing" "$EMAIL"
 
-               	        # disable  maintenance
+			# disable  maintenance
                         if [ -z "$drupal" ]
                        	then
                                 drush vset maintance_mode 0     # this does not work with drupal 8
