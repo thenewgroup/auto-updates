@@ -20,6 +20,6 @@ You could regularly poll for updats by adding this to crontab -e (run every full
 ```
 or have updates triggered by security announcement emails (see comments in script).
 
-Mannually Triggering Updates
+Manually Triggering Updates
 --------------------------
 If you call the script with the ``update-all`` parameter it will perform all pending updates (not just ``--security-only``).
