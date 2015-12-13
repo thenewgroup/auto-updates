@@ -6,7 +6,7 @@
 # and subscribing $USER-drupal@$HOST to the security email newsletter.
 # https://www.drupal.org/security.
 #
-#To limit this script to only 1 site, set WEB_ROOT to your Drupal root.
+# To limit this script to only 1 site, set WEB_ROOT to your Drupal root.
 #
 # To use on multiple sites, set WEB_ROOT at the shared folder for all Drupal sites.
 
