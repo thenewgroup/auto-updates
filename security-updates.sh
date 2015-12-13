@@ -1,5 +1,12 @@
 #!/bin/bash
-# Place this script in cron and run hourly. To limit this script to only 1 site, set WEB_ROOT to your Drupal root.
+# You may poll for updates by running this script in a cron job, or
+# have updates triggerd by piping security announcement emails into this script.
+# For example, with a ~/.forward or ~/.qmail-drupal file
+# that contains a line with: "|/path/to/this/script/named/security-updates.sh",
+# and subscribing $USER-drupal@$HOST to the security email newsletter.
+# https://www.drupal.org/security.
+#
+#To limit this script to only 1 site, set WEB_ROOT to your Drupal root.
 #
 # To use on multiple sites, set WEB_ROOT at the shared folder for all Drupal sites.
 
@@ -20,8 +27,6 @@ fi
 
 # Capture any message piped into this script and send it to $EMAIL.
 # Allows to trigger this script by directing security anouncement emails to it.
-# For example, with a .forward or .qmail-security-announcments file
-# that contains a line with: "|/path/to/this/script/named/security-updates.sh"
 stdin=$(cat)
 if [ -n "$stdin" ]
 then
