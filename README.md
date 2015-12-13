@@ -1,5 +1,5 @@
 # auto-updates
-Automatic security updates for Drupal
+Automatic security updates for Drupal.
 
 To limit this script to only one Drupal site, set ``WEB_ROOT`` to your Drupal root. And, to update multiple sites, 
 set ``WEB_ROOT`` at the shared folder for all Drupal sites.
