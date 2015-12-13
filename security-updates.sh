@@ -15,7 +15,7 @@ WEB_ROOT="/var/www"
 # Replace with "public_html" if you use a public_html subfolder
 PUBLIC_DIR="."
 EMAIL="${USER}@${HOST}"
-BACKUP_DIR="$HOME/drush-backups" # should same place as drush uses
+BACKUP_DIR="$HOME/drush-backups" # should be the same place as drush uses
 
 # The drupal (command line) console is required to enable mainenance mode for drupal 8.
 
