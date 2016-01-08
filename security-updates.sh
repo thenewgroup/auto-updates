@@ -23,7 +23,7 @@ BACKUP_DIR="$HOME/drush-backups" # should be the same place as drush uses
 # The drupal (command line) console is required to enable mainenance mode for drupal 8.
 
 
-if [ -z "$*" ] || [ $1 == "mailpipe" ] && [ -z "$2" ]
+if [ -z "$*" ] || [ "$1" == "mailpipe" ] && [ -z "$2" ]
 then
         DRUSHPARAM="--security-only"
 elif [ "$1" == "update-all" ] || [ "$2" == "update-all" ]
@@ -47,7 +47,7 @@ fi
 
 # Capture message piped into this script and send it to $EMAIL.
 # This allows to trigger this script by directing security anouncement emails to it.
-if [ $1 == "mailpipe" ]
+if [ "$1" == "mailpipe" ]
 then
 	stdin=$(cat)
 	if [ -n "$stdin" ]
