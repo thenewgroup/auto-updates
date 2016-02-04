@@ -1,10 +1,10 @@
 #!/bin/bash
 # Place this script in cron and run hourly. To limit this script to only 1 site, set WEB_ROOT to your Drupal root.
 #
-# To use on multiple sites, set WEB_ROOT at the shared folder for all Drupal sites.
+# To use on multiple sites, set WEB_ROOT at the shared folder for all Drupal sites with a '/*' appended.
 
 drush=`which drush`
-WEB_ROOT="/var/www/"
+WEB_ROOT="/var/www/*"
 
 # Replace with "public_html" if you use a public_html subfolder
 PUBLIC_DIR="."
@@ -18,8 +18,8 @@ then
 	mkdir -p $BACKUP_DIR
 fi
 
-echo "Scanning sites directory for Drupal installations"
-cd $WEB_ROOT
+echo "Scanning WEB_ROOT directory $WEB_ROOT for Drupal installations"
+
 
 for i in $WEB_ROOT/
 do
@@ -33,7 +33,7 @@ do
 	SITE_STATUS=$($drush status | wc -l)
 	if [[ $SITE_STATUS -gt 7 ]]
 	then
-		echo "Drupal site found in $(pwd)"
+		echo "Drupal installation for $i found in $(pwd)"
 
 		# Make sure status is up to date
 		drush pm-refresh
