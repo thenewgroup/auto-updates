@@ -1,15 +1,42 @@
 #!/bin/bash
-# Place this script in cron and run hourly. To limit this script to only 1 site, set WEB_ROOT to your Drupal root.
-#
+# You may poll for updates by running this script in a cron job, or
+# have updates triggerd by piping security announcement emails into this script.
+# For example, with a ~/.forward or ~/.qmail-drupal file
+# that contains a line reading (without #, and unquoted for qmail):
+# "|/path/to/this/script/named/security-updates.sh mailpipe"
+# and subscribing $USER-drupal@$HOST to the security email newsletter.
+# https://www.drupal.org/security.
+
+# Non-security only updates may be done by passing the "update-all" parameter
+# to this script.
+
+# To limit this script to only 1 site, set WEB_ROOT to your Drupal root.
 # To use on multiple sites, set WEB_ROOT at the shared folder for all Drupal sites.
 
-drush=`which drush`
-WEB_ROOT="/var/www/"
+WEB_ROOT="/var/www"
 
 # Replace with "public_html" if you use a public_html subfolder
 PUBLIC_DIR="."
-EMAIL="me@example.com"
-BACKUP_DIR="$HOME/backups/"
+EMAIL="${USER}@${HOST}"
+BACKUP_DIR="$HOME/drush-backups" # should be the same place as drush uses
+
+# The drupal (command line) console is required to enable mainenance mode for drupal 8.
+
+
+if [ -z "$*" ] || [ "$1" == "mailpipe" ] && [ -z "$2" ]
+then
+        DRUSHPARAM="--security-only"
+elif [ "$1" == "update-all" ] || [ "$2" == "update-all" ]
+then
+       	DRUSHPARAM=""
+else
+       	DRUSHPARAM="$*"
+fi
+
+
+# determine available commands
+drush=`which drush`
+drupal=`which drupal`
 
 # Create a backup folder if it does not exist.
 if [[ ! -d $BACKUP_DIR ]]
@@ -18,7 +45,18 @@ then
 	mkdir -p $BACKUP_DIR
 fi
 
-echo "Scanning sites directory for Drupal installations"
+# Capture message piped into this script and send it to $EMAIL.
+# This allows to trigger this script by directing security anouncement emails to it.
+if [ "$1" == "mailpipe" ]
+then
+	stdin=$(cat)
+	if [ -n "$stdin" ]
+	then
+		echo "$stdin" | mail -s "$WEB_ROOT: security-updates.sh mailpipe triggered" "$EMAIL"
+	fi
+fi
+
+echo "Scanning sites directory for Drupal installations."
 cd $WEB_ROOT
 
 for i in $WEB_ROOT/
@@ -33,29 +71,42 @@ do
 	SITE_STATUS=$($drush status | wc -l)
 	if [[ $SITE_STATUS -gt 7 ]]
 	then
-		echo "Drupal site found in $(pwd)"
+		echo "Drupal site found in $(pwd)."
 
 		# Make sure status is up to date
 		drush pm-refresh
 
 		# Check for security updates
-		OUTPUT="$(drush pm-updatestatus --security-only)"
+		OUTPUT="$(drush pm-updatestatus ${DRUSHPARAM})"
 		if [[ $OUTPUT == *"UPDATE"* ]]
 		then
-			drush vset maintance_mode 1
+			# enable  maintenance
+			if [ -z "$drupal" ]
+			then
+				drush vset maintance_mode 1	# this does not work with drupal 8
+			else
+				drupal site:maintenance ON
+			fi
 
 			# Take a backup and if it succeeds, run the update
 			SITE_NAME=`basename ${i}`
-			drush sql-dump | gzip > ${BACKUP_DIR}/${SITE_NAME}-pre-sec-update.sql.gz && drush up --security-only -y | mail -s "Your website needs testing" "$EMAIL"
-			drush vset maintance_mode 0
+			drush sql-dump | gzip > ${BACKUP_DIR}/${USER}-${SITE_NAME}-pre-sec-update_$(date +%F_%T).sql.gz && drush up ${DRUSHPARAM} -y | mail -s "${USER}-${SITE_NAME} website needs testing" "$EMAIL"
+
+			# disable  maintenance
+                        if [ -z "$drupal" ]
+                       	then
+                                drush vset maintance_mode 0     # this does not work with drupal 8
+                       	else
+                               	drupal site:maintenance OFF
+                       	fi
 
 			# Notify stakeholders
-			echo "A critical security update has been applied to $SITE_NAME. You should test production now."
+			echo "A ${DRUSHPARAM} update has been applied to $SITE_NAME. You should test production now."
 		else
-			echo "No available security updates"
+			echo "No ${DRUSHPARAM} updates."
 		fi
 	else
-		echo "No Drupal site found"
+		echo "No Drupal site found."
 	fi
 done
-echo "Done with Drupal security updates"
+echo "Done with Drupal ${DRUSHPARAM} updates."
