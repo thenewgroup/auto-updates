@@ -39,10 +39,10 @@ drush=`which drush`
 drupal=`which drupal`
 
 # Create a backup folder if it does not exist.
-if [[ ! -d $BACKUP_DIR ]]
+if [[ ! -d "$BACKUP_DIR" ]]
 then
 	echo "Creating new backup directory in $BACKUP_DIR"
-	mkdir -p $BACKUP_DIR
+	mkdir -p "$BACKUP_DIR"
 fi
 
 # Capture message piped into this script and send it to $EMAIL.
