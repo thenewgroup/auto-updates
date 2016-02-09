@@ -92,12 +92,12 @@ do
 			drush sql-dump | gzip > ${BACKUP_DIR}/${USER}-${SITE_NAME}-pre-sec-update_$(date +%F_%T).sql.gz && drush up ${DRUSHPARAM} -y | mail -s "${USER}-${SITE_NAME} website needs testing" "$EMAIL"
 
 			# disable  maintenance
-                        if [ -z "$drupal" ]
-                       	then
-                                drush vset maintance_mode 0     # this does not work with drupal 8
-                       	else
-                               	drupal site:maintenance OFF
-                       	fi
+			if [ -z "$drupal" ]
+			then
+				drush vset maintance_mode 0     # this does not work with drupal 8
+			else
+				drupal site:maintenance OFF
+			fi
 
 			# Notify stakeholders
 			echo "A ${DRUSHPARAM} update has been applied to $SITE_NAME. You should test production now."
