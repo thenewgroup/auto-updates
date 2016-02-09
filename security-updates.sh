@@ -105,7 +105,7 @@ do
 			echo "No ${DRUSHPARAM} updates."
 		fi
 	else
-		echo "No Drupal site found."
+		echo "No Drupal site found in $(pwd)."
 	fi
 done
 echo "Done with Drupal ${DRUSHPARAM} updates."
