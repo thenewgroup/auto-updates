@@ -67,8 +67,8 @@ do
 	  cd $PUBLIC_DIR
 
 	# Does the directory have a Drupal site?
-	SITE_STATUS=$($drush status | wc -l)
-	if [[ $SITE_STATUS -gt 7 ]]
+	SITE_STATUS=$($drush status | grep "Drupal" | wc -l)
+	if [[ $SITE_STATUS -gt 0 ]]
 	then
 		echo "Drupal installation for $i found in $(pwd)."
 
