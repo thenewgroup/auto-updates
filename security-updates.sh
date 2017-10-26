@@ -82,7 +82,12 @@ do
 			# enable  maintenance
 			if [ -z "$drupal" ]
 			then
-				drush vset maintance_mode 1	# this does not work with drupal 8
+				if [ -f $i/core/CHANGELOG.txt ] # Drupal 8 or Drupal 7?
+				then
+					drush sset system.maintenance_mode 1	# this is drupal 8
+				else
+					drush vset maintance_mode 1	# this is drupal 7
+				fi
 			else
 				drupal site:maintenance ON
 			fi
@@ -94,7 +99,13 @@ do
 			# disable  maintenance
 			if [ -z "$drupal" ]
 			then
-				drush vset maintance_mode 0     # this does not work with drupal 8
+				if [ -f $i/core/CHANGELOG.txt ] # Drupal 8 or Drupal 7?
+				then
+					drush sset system.maintenance_mode 0    # this is drupal 8
+				else
+					drush vset maintance_mode 0     # this is drupal 7
+				fi
+
 			else
 				drupal site:maintenance OFF
 			fi
