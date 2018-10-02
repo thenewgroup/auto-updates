@@ -86,7 +86,7 @@ do
 				then
 					drush sset system.maintenance_mode 1	# this is drupal 8
 				else
-					drush vset maintance_mode 1	# this is drupal 7
+					drush vset maintenance_mode 1	# this is drupal 7
 				fi
 			else
 				drupal site:maintenance ON
@@ -103,7 +103,7 @@ do
 				then
 					drush sset system.maintenance_mode 0    # this is drupal 8
 				else
-					drush vset maintance_mode 0     # this is drupal 7
+					drush vset maintenance_mode 0     # this is drupal 7
 				fi
 
 			else
